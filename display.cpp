@@ -57,19 +57,6 @@ void display::increment_cursor_value(){
   if (setpoint_val[icursor] > 9) setpoint_val[icursor]=0;
 }
 
-
-void display::refresh_display(){
-  //create and send the buffer to the oled
-  //screen.
-  oled.clearBuffer();
-  disp_glyph();
-  disp_cursor();
-  disp_setpoints();
-  disp_current_temp();
-  disp_remaining_time();
-  oled.sendBuffer();
-}
-
 void display::disp_current_temp(){
   // display measured temperature
   oled.setDrawColor(1);
@@ -99,8 +86,19 @@ void display::disp_remaining_time(){
 
 void display::disp_cursor(){
   //draw a box at the cursor position
-  oled.setDrawColor(1);
+  oled.setDrawColor(cursorColor);
   oled.drawBox(xcursor[icursor], 21, 9, 14);
+}
+
+void display::hide_cursor(){
+  //set transparent cursor
+  cursorColor = 0;
+  //reset its position
+  icursor = 0;
+}
+
+void display::show_cursor(){
+  cursorColor = 1;
 }
 
 void display::disp_setpoints(){
@@ -128,4 +126,16 @@ void display::disp_glyph(){
   oled.drawGlyph(26,14,0x2103); // °C
   oled.drawGlyph(90,14,0x23f1); // Chrono
   oled.drawLine(64,0,64,63);
+}
+
+void display::refresh_display(){
+  //create and send the buffer to the oled
+  //screen.
+  oled.clearBuffer();
+  disp_glyph();
+  disp_cursor();
+  disp_setpoints();
+  disp_current_temp();
+  disp_remaining_time();
+  oled.sendBuffer();
 }

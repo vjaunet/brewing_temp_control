@@ -20,6 +20,10 @@ class display
   void start();
   void refresh_display();
 
+  //cursor related functions
+  void hide_cursor();
+  void show_cursor();
+
   //functions for the setpoints
   void change_cursor_pos();
   void increment_cursor_value();
@@ -39,6 +43,8 @@ class display
 
   float current_temp;
   uint32_t remaining_time_msec=0;
+
+  uint8_t cursorColor=1;
 
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C oled;
 

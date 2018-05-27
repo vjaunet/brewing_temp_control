@@ -205,6 +205,10 @@ void loop() {
   // temperature control and timing operation
   if (start_process){
 
+    //turn off the cursor again and reset its position
+    display.hide_cursor();
+
+
     // call sensors.requestTemperatures() to issue a global temperature
     // request to all devices on the bus.
     // wait for the conversion to have finished and
@@ -278,6 +282,9 @@ void loop() {
     last_loop_time = millis();
 
     heater_off();
+
+    //display back the cursor
+    display.show_cursor();
   }
 
   /*---------------------------------------------------------------*/
