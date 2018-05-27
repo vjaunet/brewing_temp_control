@@ -221,16 +221,20 @@ void loop() {
       return;
     }
 
-    //TODO : depending whether temperature is increasing or decreasing
+    //TODO : start heating depending on whether temperature is
+    //TODO:  increasing or decreasing
+
     // decide to heat or not.
-    if ( meas_temp < (display.getTempSetpoint() - 4.0)) {
+    if ( meas_temp < (display.getTempSetpoint() - 2.0)) {
       //need to heat
       heater_on();
 
     } else if ( meas_temp < display.getTempSetpoint() &&
-		meas_temp >= display.getTempSetpoint() - 4.0 ) {
+		meas_temp >= display.getTempSetpoint() - 2.0 ) {
       //the output power is set according to the temperature difference
-      float err=abs(meas_temp-display.getTempSetpoint())/4.0;
+      //the closer we are to the setpoint the less powwer we input to
+      //avoid overheating
+      float err=abs(meas_temp-display.getTempSetpoint())/2.0;
       heater_on(err);
 
     } else {
@@ -241,12 +245,6 @@ void loop() {
       heater_off();
     }
 
-   // if ( (meas_temp < display.getTempSetpoint() - 1.0) &&
-   // 		(meas_temp < last_temp)) {
-   //    //temperature is decreasing : heat for 500ms
-   //    heater_on();
-   //    wait_ms_(500);
-   //  }
 
     /*---------------------------------------------------------------*/
     //reccord the last measured temperature
@@ -259,15 +257,18 @@ void loop() {
     }
     last_loop_time = millis();
 
-    //update the displayed current values
+    //update the displayed temperature
     display.set_current_temp(meas_temp);
-    display.setRemainingTime(duration_setpoint_msec - process_duration_msec);
+    //update the displayed remaining time if a duration was set
+    if ( duration_setpoint_msec != 0) {
+      display.setRemainingTime(duration_setpoint_msec - process_duration_msec);
 
-    //the temperature has been set for long enough, stop heating
-    if ( process_duration_msec >= duration_setpoint_msec){
-      heater_off();
-      display.setRemainingTime(0);
-      start_process = false;
+      //the temperature has been set for long enough, stop heating
+      if ( process_duration_msec >= duration_setpoint_msec){
+	heater_off();
+	display.setRemainingTime(0);
+	start_process = false;
+      }
     }
 
   } else {
